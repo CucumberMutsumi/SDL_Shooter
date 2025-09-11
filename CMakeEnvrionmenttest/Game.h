@@ -22,7 +22,8 @@ public:
 
 	void Updata(float deltatime);
 	void Renderer();
-
+	void SetFinalScore(int score) { FinalScore = score; }
+	int GetFinalScore() { return FinalScore; }
 	void RenderCenterText(const string title, float posY, bool IsCenter);
 
 	SDL_Window* GetWindow() { return window; }
@@ -39,7 +40,7 @@ private:
 	
 	TTF_Font* titleFont;
 	TTF_Font* textFont;
-
+	int FinalScore = 0;
 	bool IsGameRunning = true;
 	Scenc* CurrentScenc = nullptr;
 	SDL_Window* window = nullptr;

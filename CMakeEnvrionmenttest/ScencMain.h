@@ -40,6 +40,7 @@ public:
 	void PlayerGetItem(Item* item);
 	void RenderItem();
 	void RenderUIhealth();
+	void ChengeSceneDelay(float deltatime, float delay);
 private:
 	
 	//初始化模板
@@ -56,6 +57,7 @@ private:
 	int Score = 0;
 	std::mt19937 gen;
 	std::uniform_real_distribution<float> dis;
+	float timerEnd = 0.0f;
 	//子弹容器
 	list<PlayerBullte*> PlayerBulltes;
 	list<Enemy*> Enemies;

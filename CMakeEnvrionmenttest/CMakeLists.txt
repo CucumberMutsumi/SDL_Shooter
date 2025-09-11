@@ -21,7 +21,8 @@ add_executable(CMakeEnvrionmenttest
     "ScencTitle.h" 
     "ScencTitle.cpp"
     "Object.h"
-)
+    "SceneEnd.h"
+    "SceneEnd.cpp")
 
 # SDL2及扩展库配置
 set(SDL2_ALL_DIR "E:/SDL2")  # SDL根目录（请确保路径正确）

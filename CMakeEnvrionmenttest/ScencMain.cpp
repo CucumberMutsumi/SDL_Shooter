@@ -2,6 +2,7 @@
 #include"SDL.h"
 #include"SDL_image.h"
 #include"Game.h"
+#include"SceneEnd.h"
 #include"ScencTitle.h"
 #include<random>
 
@@ -120,6 +121,10 @@ void ScencMain::Updata(float deltatime)
 	UpdataPlayer();
 	UpdataExplosion(deltatime);
 	UpdateItem(deltatime);
+	if (IsPlayerDead)
+	{
+		ChengeSceneDelay(deltatime, 2);
+	}
 }
 
 void ScencMain::Render()
@@ -141,6 +146,7 @@ void ScencMain::Render()
 	//渲染敌人
 	RenderEnemy();
 	RenderItem();
+	//是每一帧都遍历存储爆炸的链表，如果存在就渲染，不用bool判断是否需要爆炸
 	RenderExxplosion();
 	RenderUIhealth();
 }
@@ -352,6 +358,7 @@ void ScencMain::UpdataPlayer()
 	if (player.currentHealth <= 0)
 	{
 		IsPlayerDead = true;
+		//玩家死亡添加爆炸相关信息
 		auto currenttime = SDL_GetTicks();
 		auto explosion = new Explode(ExplodeTemple);
 		explosion->position.x = player.postion.x + player.width / 2 - explosion->width / 2;
@@ -359,6 +366,8 @@ void ScencMain::UpdataPlayer()
 		explosion->StratTime = currenttime;
 		Explosions.push_back(explosion);
 		Mix_PlayChannel(-1, Sound["player_explode"], 0);
+		//玩家死亡时将分数记录
+		game.SetFinalScore(Score);
 		return;
 	}
 	for (auto& enemy : Enemies)
@@ -738,4 +747,14 @@ void ScencMain::RenderUIhealth()
 	SDL_RenderCopy(game.GetRenderer(), texture, NULL, &des);
 	SDL_FreeSurface(surface);
 	SDL_DestroyTexture(texture);
+}
+
+void ScencMain::ChengeSceneDelay(float deltatime, float delay)
+{
+	timerEnd += deltatime;
+	if (timerEnd > delay)
+	{
+		auto Sceneend = new SceneEnd();
+		game.ChangeScenc(Sceneend);
+	}
 }
