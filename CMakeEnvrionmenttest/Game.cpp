@@ -43,6 +43,48 @@ Game::Game()
 {
 }
 
+void Game::SaveData()
+{
+	ofstream ofs("data.dat", ios::out);
+	if (!ofs.is_open())
+	{
+		SDL_LogError(SDL_LOG_CATEGORY_ERROR, "fail to open file Error: %s\n", SDL_GetError());
+		return;
+	}
+	for (auto& user : Leaderboard)
+	{
+		ofs << user.second << "  " << user.first << endl;
+	}
+	ofs.close();
+}
+
+void Game::Loadata()
+{
+	ifstream ifs;
+	ifs.open("data.dat", ios::in);
+	if (!ifs.is_open())
+	{
+		SDL_Log("open file fail");
+		return;
+	}
+	Leaderboard.clear();
+	int score;
+	string name;
+	while (ifs >> name >> score)
+	{
+		Leaderboard.insert(make_pair(score, name));
+	}
+}
+
+void Game::Insertleaderboard(int score, string name)
+{
+	Leaderboard.insert(make_pair(score, name));
+	if (Leaderboard.size() > 8)
+	{
+		Leaderboard.erase(--Leaderboard.end());//指向最后一个元素
+	}
+}
+
 Game& Game::GetInstance()
 {
 	static Game Instance;
@@ -51,6 +93,7 @@ Game& Game::GetInstance()
 
 Game::~Game()
 {
+	SaveData();
 	Clean();
 }
 
@@ -132,6 +175,7 @@ void Game::Init()
 	{
 		SDL_LogError(SDL_LOG_CATEGORY_ERROR, "init Font Error: %s\n", SDL_GetError());
 	}
+	Loadata();
 	CurrentScenc = new ScencTitle();
 	CurrentScenc->Init();
 }
@@ -243,13 +287,14 @@ void Game::Renderer()
 	SDL_RenderPresent(renderer);
 }
 
-void Game::RenderCenterText(const string title, float posY, bool IsCenter)
+SDL_Point Game::RenderCenterText(const string title, float posY, bool IsCenter)
 {
 	//用表面来创建纹理
 	//颜色
 	SDL_Color color = { 255,255,255,255 };
 	//创建表面
 	SDL_Surface* surface;
+	//为表面附上字体
 	if (IsCenter)
 	{
 		surface = TTF_RenderUTF8_Solid(titleFont, title.c_str(), color);
@@ -268,4 +313,27 @@ void Game::RenderCenterText(const string title, float posY, bool IsCenter)
 	SDL_RenderCopy(GetRenderer(), texture, NULL, &rect);
 	SDL_FreeSurface(surface);
 	SDL_DestroyTexture(texture);
+	return { rect.x + rect.w,+y };
+}
+
+void Game::RenderTextPos(const string& str, int x, int y,bool IsLeft)
+{
+	SDL_Color color = { 255,255,255,255 };
+	SDL_Surface* surface;
+	surface = TTF_RenderUTF8_Solid(textFont, str.c_str(), color);
+	SDL_Texture* texture = SDL_CreateTextureFromSurface(GetRenderer(), surface);
+	SDL_Rect rect;
+	if (IsLeft)
+	{
+		rect = { x,y,surface->w,surface->h };
+	}
+	else
+	{
+		//右对齐:窗口宽度减去左对齐的x再减表面的w
+		rect = { GetWindowWidth() - x - surface->w,y,surface->w,surface->h };
+	}
+	
+	SDL_RenderCopy(GetRenderer(), texture, NULL, &rect);
+	SDL_DestroyTexture(texture);
+	SDL_FreeSurface(surface);
 }

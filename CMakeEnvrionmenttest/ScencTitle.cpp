@@ -40,7 +40,7 @@ void ScencTitle::Render()
 
 	if (timer > 0.5f)
 	{
-		string instrution = "Puse J to start game";
+		string instrution = "Pause J to start game";
 		game.RenderCenterText(instrution, 0.8, false);
 	}
 	

@@ -16,5 +16,7 @@ private:
 	bool IsTyping = true;
 	void RenderPhase1();
 	void RenderPhase2();
+	void RemoveLastUTF8Char(std::string& str);
+	float timer = 0.0f;
 	std::string name = "";
 };

@@ -4,6 +4,8 @@
 #include<SDL_mixer.h>
 #include<SDL_ttf.h>
 #include<string>
+#include<map>
+#include<fstream>
 #include"Object.h"
 
 using namespace std;
@@ -24,7 +26,8 @@ public:
 	void Renderer();
 	void SetFinalScore(int score) { FinalScore = score; }
 	int GetFinalScore() { return FinalScore; }
-	void RenderCenterText(const string title, float posY, bool IsCenter);
+	SDL_Point RenderCenterText(const string title, float posY, bool IsCenter);
+	void RenderTextPos(const string& str, int x, int y, bool IsLeft = true);
 
 	SDL_Window* GetWindow() { return window; }
 	SDL_Renderer* GetRenderer() { return renderer; }
@@ -32,6 +35,8 @@ public:
 	int GetWindowHeigth() { return WindowHeigth; }
 	void BackGroundUpdate(float deltatime);
 	void RenderBackGround();
+	void Insertleaderboard(int score, string name);
+	multimap<int, string, greater<int>>& GetBoard() { return Leaderboard; }
 private:
 	Game();
 	//É¾³ý¿½±´º¯Êý
@@ -54,6 +59,10 @@ private:
 
 	BackGround nearStar;
 	BackGround farStar;
+	multimap<int, string,greater<int>> Leaderboard;
+	void SaveData();
+	void Loadata();
+	
 };
 /*
 	int FPS=60;
